@@ -5,6 +5,9 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/instrument-sans";
 @import "@fontsource-variable/merriweather";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "./typeset.css";
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -12,6 +15,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+    --font-geist: 'Geist Variable', sans-serif;
+    --font-geist-mono: 'Geist Mono Variable', monospace;
+
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
@@ -207,12 +213,15 @@
     body {
         @apply bg-background text-foreground;
     }
-  html {
-    @apply font-sans;
+
+    html {
+        @apply font-sans;
     }
-  button:not(:disabled), [role="button"]:not(:disabled) {
-    cursor:
-        pointer;
+
+    button:not(:disabled),
+    [role="button"]:not(:disabled) {
+        cursor:
+            pointer;
     }
 }
 
@@ -233,80 +242,55 @@
         var(--sidebar-border);
     --color-sidebar-ring:
         var(--sidebar-ring);
-  @keyframes message-highlight {
-  0%, 60% {
-    background-color:
-        var(--accent);
+
+    @keyframes message-highlight {
+
+        0%,
+        60% {
+            background-color:
+                var(--accent);
         }
-  100% {
-    background-color:
-        transparent;
+
+        100% {
+            background-color:
+                transparent;
         }
     }
-  --font-sans:
-        'Instrument Sans Variable', sans-serif;
-  --font-heading:
-        'Merriweather Variable', serif;
-  --color-chart-5:
-        var(--chart-5);
-  --color-chart-4:
-        var(--chart-4);
-  --color-chart-3:
-        var(--chart-3);
-  --color-chart-2:
-        var(--chart-2);
-  --color-chart-1:
-        var(--chart-1);
-  --color-ring:
-        var(--ring);
-  --color-input:
-        var(--input);
-  --color-border:
-        var(--border);
-  --color-destructive:
-        var(--destructive);
-  --color-accent-foreground:
-        var(--accent-foreground);
-  --color-accent:
-        var(--accent);
-  --color-muted-foreground:
-        var(--muted-foreground);
-  --color-muted:
-        var(--muted);
-  --color-secondary-foreground:
-        var(--secondary-foreground);
-  --color-secondary:
-        var(--secondary);
-  --color-primary-foreground:
-        var(--primary-foreground);
-  --color-primary:
-        var(--primary);
-  --color-popover-foreground:
-        var(--popover-foreground);
-  --color-popover:
-        var(--popover);
-  --color-card-foreground:
-        var(--card-foreground);
-  --color-card:
-        var(--card);
-  --color-foreground:
-        var(--foreground);
-  --color-background:
-        var(--background);
-  --radius-sm:
-        calc(var(--radius) * 0.6);
-  --radius-md:
-        calc(var(--radius) * 0.8);
-  --radius-lg:
-        var(--radius);
-  --radius-xl:
-        calc(var(--radius) * 1.4);
-  --radius-2xl:
-        calc(var(--radius) * 1.8);
-  --radius-3xl:
-        calc(var(--radius) * 2.2);
-  --radius-4xl:
-        calc(var(--radius) * 2.6)
+
+    --font-sans: 'Instrument Sans Variable',
+    sans-serif;
+    --font-heading: 'Merriweather Variable',
+    serif;
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6)
 }
 
 @utility animate-message-highlight {
@@ -319,8 +303,9 @@
         none;
     scrollbar-width:
         none;
-  &::-webkit-scrollbar {
-    display:
-        none;
+
+    &::-webkit-scrollbar {
+        display:
+            none;
     }
 }

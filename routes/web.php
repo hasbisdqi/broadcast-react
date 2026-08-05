@@ -8,7 +8,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 
     Route::get('/chat', function () {
-        return inertia('Chat');
+        return inertia('chat/page');
     })->name('chat');
 });
 

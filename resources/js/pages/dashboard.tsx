@@ -7,19 +7,80 @@ export default function Dashboard() {
         <>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+                <div className="relative min-h-screen flex-1 overflow-scroll md:min-h-min">
+                    <div className="absolute inset-0">
+                        <div className="typeset w-full">
+                            <h1>Building a Streaming Chatbot</h1>
+                            <p>The <code>useChat</code> hook makes it effortless to create a conversational user interface for your chatbot application. It enables the streaming of chat messages from your AI provider, manages the chat state, and updates the UI automatically as new messages arrive.</p>
+                            <p>To summarize, the <code>useChat</code> hook provides the following features:</p>
+                            <ul>
+                                <li><strong>Message Streaming</strong>: All the messages from the AI provider are streamed to the chat UI in real-time.</li>
+                                <li><strong>Managed States</strong>: The hook manages the states for input, messages, status, error and more for you.</li>
+                                <li><strong>Seamless Integration</strong>: Easily integrate your chat AI into any design or layout with minimal effort.</li>
+                            </ul>
+                            <p>In this guide, you will learn how to use the <code>useChat</code> hook to create a chatbot application with real-time message streaming. Check out our <a href="/docs/ai-sdk-ui/chatbot-tool-usage">chatbot with tools guide</a> to learn how to use tools in your chatbot.</p>
+                            <h2>Example</h2>
+                            <p>The request flow works like this:</p>
+                            <ol>
+                                <li>The user submits a message and <code>sendMessage</code> posts it to your API route.</li>
+                                <li>Your route calls the provider and returns a UI message stream.</li>
+                                <li>The hook appends chunks to the last message as they arrive, re-rendering as it goes.</li>
+                            </ol>
+
+                            <blockquote><p>The UI messages have a new <code>parts</code> property that contains the message parts. We recommend rendering the messages using the <code>parts</code> property instead of the <code>content</code> property. The parts property supports different message types, including text, tool invocation, and tool result, and allows for more flexible and complex chat UIs.</p></blockquote>
+                            <p>In the <code>Page</code> component, the <code>useChat</code> hook will request to your AI provider endpoint whenever the user sends a message using <code>sendMessage</code>. The messages are then streamed back in real-time and displayed in the chat UI.</p>
+                            <h2>Customized UI</h2>
+                            <p><code>useChat</code> also provides ways to manage the chat message states via code, show status, and update messages without being triggered by user interactions.</p>
+                            <h3>Status</h3>
+                            <p>The <code>useChat</code> hook returns a <code>status</code>. It has the following possible values:</p>
+                            <ul>
+                                <li><code>submitted</code>: The message has been sent to the API and we're awaiting the start of the response stream.</li>
+                                <li><code>streaming</code>: The response is actively streaming in from the API, receiving chunks of data.</li>
+                                <li><code>ready</code>: The full response has been received and processed; a new user message can be submitted.</li>
+                                <li><code>error</code>: An error occurred during the API request, preventing successful completion.</li>
+                            </ul>
+
+                            <h3>Error State</h3>
+                            <p>Similarly, the <code>error</code> state reflects the error object thrown during the fetch request. It can be used to display an error message, disable the submit button, or show a retry button:</p>
+                            <blockquote><p>We recommend showing a generic error message to the user, such as "Something went wrong." This is a good practice to avoid leaking information from the server.</p></blockquote>
+
+                            <h3>Cancellation and regeneration</h3>
+                            <p>It's also a common use case to abort the response message while it's still streaming back from the AI provider. You can do this by calling the <code>stop</code> function returned by the <code>useChat</code> hook.</p>
+
+                            <h2>API reference</h2>
+                            <h3>useChat(options)</h3>
+                            <p>Creates a chat helper. All options are optional; the defaults talk to <code>/api/chat</code> and render at native stream speed.</p>
+                            <table>
+                                <thead>
+                                    <tr><th>Prop</th><th>Type</th><th>Description</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><code>transport</code></td><td><code>ChatTransport&lt;UIMessage&gt;</code></td><td>How messages reach your API route</td></tr>
+                                    <tr><td><code>messages</code></td><td><code>UIMessage[]</code></td><td>Initial messages to seed the conversation</td></tr>
+                                    <tr><td><code>onFinish</code></td><td><code>(event: FinishEvent) =&gt; void</code></td><td>Runs when the assistant response completes</td></tr>
+                                    <tr><td><code>onError</code></td><td><code>(error: Error) =&gt; void</code></td><td>Runs when the fetch request fails</td></tr>
+                                    <tr><td><code>throttle</code></td><td><code>number</code></td><td>Milliseconds between UI updates while streaming</td></tr>
+                                </tbody>
+                            </table>
+                            <h2>Event Callbacks</h2>
+                            <p><code>useChat</code> provides optional event callbacks that you can use to handle different stages of the chatbot lifecycle:</p>
+                            <ul>
+                                <li><code>onFinish</code>: Called when the assistant response is completed. The event includes the response message, all messages, and flags for abort, disconnect, and errors.</li>
+                                <li><code>onError</code>: Called when an error occurs during the fetch request.</li>
+                                <li><code>onData</code>: Called whenever a data part is received.</li>
+                            </ul>
+                            <p>These callbacks can be used to trigger additional actions, such as logging, analytics, or custom UI updates.</p>
+
+                            <h2>Math</h2>
+                            <p>Display math sits in the flow rhythm and scrolls when it runs long. Inline math like <math><msup><mi>e</mi><mrow><mi>i</mi><mi>π</mi></mrow></msup><mo>+</mo><mn>1</mn><mo>=</mo><mn>0</mn></math> rides the line without stretching it.</p>
+                            <h3>Display</h3>
+                            <p>The quadratic formula, as a block:</p>
+
+                            <p>Prose continues after the block at the normal distance, so equations read as part of the argument, not decoration.</p>
+                            <h3>Overflow</h3>
+                            <p>A long expansion scrolls inside its own box instead of breaking the column:</p>
+                        </div>
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                 </div>
             </div>
         </>
