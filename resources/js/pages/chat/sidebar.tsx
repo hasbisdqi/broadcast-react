@@ -52,16 +52,6 @@ const chats: ChatData[] = [
     { id: "3", name: "Design Team", time: "09:40", message: "Nickola: The new mockups are ready 🎨", isGroup: true, status: "none", unreadCount: 1 },
     { id: "4", name: "Farand Hume", time: "Yesterday", message: "How about 7 PM at the new Italian place downtown?", fallback: "FH", isOnline: true, status: "read" },
     { id: "5", name: "Ossie Peasey", time: "13d", message: "Hey Bonnie, yes, definitely! What time should we meet?", avatar: "https://i.pravatar.cc/150?img=4", isOnline: true, status: "sent" },
-    { id: "1", name: "Jacquenetta Slowgrave", time: "10m", message: "Great! Looking forward to it. See you later!", avatar: "https://i.pravatar.cc/150?img=1", isOnline: true, status: "sent", unreadCount: 3 },
-    { id: "2", name: "Nickola Peever", time: "40m", message: "Sounds perfect! I've been wanting to try that place.", avatar: "https://i.pravatar.cc/150?img=2", isOnline: true, status: "read" },
-    { id: "3", name: "Design Team", time: "09:40", message: "Nickola: The new mockups are ready 🎨", isGroup: true, status: "none", unreadCount: 1 },
-    { id: "4", name: "Farand Hume", time: "Yesterday", message: "How about 7 PM at the new Italian place downtown?", fallback: "FH", isOnline: true, status: "read" },
-    { id: "5", name: "Ossie Peasey", time: "13d", message: "Hey Bonnie, yes, definitely! What time should we meet?", avatar: "https://i.pravatar.cc/150?img=4", isOnline: true, status: "sent" },
-    { id: "1", name: "Jacquenetta Slowgrave", time: "10m", message: "Great! Looking forward to it. See you later!", avatar: "https://i.pravatar.cc/150?img=1", isOnline: true, status: "sent", unreadCount: 3 },
-    { id: "2", name: "Nickola Peever", time: "40m", message: "Sounds perfect! I've been wanting to try that place.", avatar: "https://i.pravatar.cc/150?img=2", isOnline: true, status: "read" },
-    { id: "3", name: "Design Team", time: "09:40", message: "Nickola: The new mockups are ready 🎨", isGroup: true, status: "none", unreadCount: 1 },
-    { id: "4", name: "Farand Hume", time: "Yesterday", message: "How about 7 PM at the new Italian place downtown?", fallback: "FH", isOnline: true, status: "read" },
-    { id: "5", name: "Ossie Peasey", time: "13d", message: "Hey Bonnie, yes, definitely! What time should we meet?", avatar: "https://i.pravatar.cc/150?img=4", isOnline: true, status: "sent" },
 ]
 
 export default function ChatSidebar() {
