@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('conversations', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->enum('type', ['direct', 'group'])->default('direct');
             $table->string('name')->nullable();
             $table->string('avatar')->nullable();
