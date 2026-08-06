@@ -13,7 +13,8 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { chat, dashboard } from '@/routes';
+import { dashboard } from '@/routes';
+import chat from '@/routes/chat';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -24,7 +25,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Chat',
-        href: chat(),
+        href: chat.index(),
         icon: MessageCircle,
     }
 ];
