@@ -99,7 +99,7 @@ Incorrect:
 ```php
 Schema::create('orders', function (Blueprint $table) {
     $table->id();
-    $table->foreignUuid('user_id')->constrained();
+    $table->foreignId('user_id')->constrained();
     $table->string('status');
     $table->timestamps();
 });
@@ -109,7 +109,7 @@ Correct:
 ```php
 Schema::create('orders', function (Blueprint $table) {
     $table->id();
-    $table->foreignUuid('user_id')->index()->constrained();
+    $table->foreignId('user_id')->index()->constrained();
     $table->string('status')->index();
     $table->timestamps();
     $table->index(['status', 'created_at']);
