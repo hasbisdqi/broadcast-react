@@ -33,6 +33,8 @@ export interface Conversation {
 export interface Message {
     id: string;
 
+    client_id?: string;
+
     conversation_id: string;
 
     sender_id: string;
@@ -48,5 +50,8 @@ export interface Message {
     sender: User;
 
     created_at: string;
-    updated_at: string;
+    updated_at?: string;
+
+    optimistic?: boolean;
+    failed?: boolean;
 }

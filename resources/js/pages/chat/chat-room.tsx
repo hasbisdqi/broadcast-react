@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, router, usePage } from '@inertiajs/react'
+import { Form, usePage } from '@inertiajs/react'
 import { Message, MessageAvatar, MessageContent, MessageFooter } from "@/components/ui/message"
 import {
     MessageScroller,
@@ -18,35 +18,90 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Message as MessageType } from '@/types'
 import { groupMessages, isMyMessage } from '@/lib/chat'
 import { formatTime } from '@/lib/date'
-import { useForm } from "@inertiajs/react";
 import chat from '@/routes/chat'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
+import axios from 'axios'
+import { useEcho } from '@laravel/echo-react'
+import { v4 as uuid } from "uuid";
 
 function ChatRoom({ messages }: { messages?: MessageType[] }) {
     const page = usePage();
     const { auth } = page.props;
     const [body, setBody] = useState('');
+    const [messagesState, setMessages] = useState<MessageType[]>(messages || []);
 
-    const grouped = groupMessages(messages || []);
+    const grouped = groupMessages(messagesState || []);
+
+    const channel = `conversation.${page.url.split('/').pop()}`;
+    useEcho(channel, "MessageSent", (e) => {
+        setMessages(prev => {
+            const index = prev.findIndex(
+                message => message.client_id === e.message.client_id
+            );
+
+            if (index === -1) {
+                return [...prev, e.message];
+            }
+
+            const copy = [...prev];
+            copy[index] = {
+                ...e.message,
+                optimistic: false,
+                failed: false,
+            };
+
+            return copy;
+        });
+    });
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-
         if (!body.trim()) return;
 
-        router.post(
-            chat.messages.store(page.url.split('/').pop() ?? ''),
+        const clientId = uuid();
+        const optimisticMessage: MessageType = {
+            id: `temp-${clientId}`,
+            client_id: clientId,
+            conversation_id: page.url.split('/').pop() ?? '',
+            sender_id: auth.user.id,
+            type: 'text',
+            attachment: null,
+            reply_to: null,
+            body,
+
+            sender: auth.user,
+
+            created_at: new Date().toISOString(),
+
+            optimistic: true,
+        };
+
+        setMessages(prev => [
+            ...prev,
+            optimisticMessage,
+        ]);
+
+        axios.post(
+            chat.messages.store(page.url.split('/').pop() ?? '').url,
             {
                 body,
-            },
-            {
-                preserveScroll: true,
-                preserveState: true,
-                onSuccess: () => setBody(""),
+                client_id: clientId,
             }
-        );
+        ).then(() => {
+            setBody("");
+        }).catch(() => {
+            setMessages(prev =>
+                prev.map(message =>
+                    message.client_id === clientId
+                        ? {
+                            ...message,
+                            failed: true,
+                        }
+                        : message
+                )
+            );
+        });
     };
-    console.log(body);
     return (
         <div className="flex-1 grow h-full overflow-hidden">
             <Card className="h-full">
@@ -65,7 +120,7 @@ function ChatRoom({ messages }: { messages?: MessageType[] }) {
                     </div>
                 </CardHeader>
                 <CardContent className="h-full overflow-hidden">
-                    {(!messages || messages?.length === 0) && (
+                    {(!messagesState || messagesState?.length === 0) && (
                         <Empty className="h-full">
                             <EmptyHeader>
                                 <EmptyMedia variant="icon">
@@ -104,7 +159,7 @@ function ChatRoom({ messages }: { messages?: MessageType[] }) {
 
                                                     <MessageContent>
                                                         {group.messages.length === 1 ? (
-                                                            <Bubble variant={isMe ? "default" : "muted"}>
+                                                            <Bubble variant={isMe ? group.messages[0].failed ? "destructive" : "default" : "muted"}>
                                                                 <BubbleContent>
                                                                     {group.messages[0].body}
                                                                 </BubbleContent>
@@ -114,7 +169,7 @@ function ChatRoom({ messages }: { messages?: MessageType[] }) {
                                                                 {group.messages.map((message) => (
                                                                     <Bubble
                                                                         key={message.id}
-                                                                        variant={isMe ? "default" : "muted"}
+                                                                        variant={isMe ? group.messages[0].failed ? "destructive" : "default" : "muted"}
                                                                     >
                                                                         <BubbleContent>
                                                                             {message.body}

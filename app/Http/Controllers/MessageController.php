@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use App\Models\Conversation;
 use App\Models\Message;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class MessageController extends Controller
         ]);
 
         DB::transaction(function () use ($conversation, $request, $data) {
-            Message::create([
+            $message = Message::create([
                 'conversation_id' => $conversation->id,
                 'sender_id' => $request->user()->id,
                 'type' => 'text',
@@ -33,8 +34,13 @@ class MessageController extends Controller
             $conversation->update([
                 'last_message_at' => now(),
             ]);
+
+            broadcast(new MessageSent(
+                $message->load('sender'),
+                $request['client_id'] ?? null
+            ))->toOthers();
         });
 
-        return back();
+        return response()->json(['status' => 'Message sent successfully']);
     }
 }
