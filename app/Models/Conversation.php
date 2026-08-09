@@ -9,6 +9,11 @@ class Conversation extends Model
 {
     use HasUuids;
 
+    protected $fillable = [
+        'name',
+        'last_message_at'
+    ];
+
     public function users()
     {
         return $this->belongsToMany(User::class);

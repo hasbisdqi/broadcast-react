@@ -1,5 +1,5 @@
-import React from 'react'
-import { Form, usePage } from '@inertiajs/react'
+import React, { useState } from 'react'
+import { Form, router, usePage } from '@inertiajs/react'
 import { Message, MessageAvatar, MessageContent, MessageFooter } from "@/components/ui/message"
 import {
     MessageScroller,
@@ -9,20 +9,44 @@ import {
     MessageScrollerProvider,
     MessageScrollerViewport,
 } from "@/components/ui/message-scroller"
-import { Bubble, BubbleContent } from '@/components/ui/bubble'
+import { Bubble, BubbleContent, BubbleGroup } from '@/components/ui/bubble'
 import { ArrowUpIcon, CheckCheck, GlobeIcon, ImageIcon, MessageCircleDashedIcon, PaperclipIcon, PlusIcon, TelescopeIcon } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group'
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '@/components/ui/input-group'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Message as MessageType } from '@/types'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { isMyMessage } from '@/lib/chat'
+import { groupMessages, isMyMessage } from '@/lib/chat'
 import { formatTime } from '@/lib/date'
+import { useForm } from "@inertiajs/react";
+import chat from '@/routes/chat'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 
 function ChatRoom({ messages }: { messages?: MessageType[] }) {
     const page = usePage();
     const { auth } = page.props;
+    const [body, setBody] = useState('');
+
+    const grouped = groupMessages(messages || []);
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!body.trim()) return;
+
+        router.post(
+            chat.messages.store(page.url.split('/').pop() ?? ''),
+            {
+                body,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess: () => setBody(""),
+            }
+        );
+    };
+    console.log(body);
     return (
         <div className="flex-1 grow h-full overflow-hidden">
             <Card className="h-full">
@@ -41,7 +65,7 @@ function ChatRoom({ messages }: { messages?: MessageType[] }) {
                     </div>
                 </CardHeader>
                 <CardContent className="h-full overflow-hidden">
-                    {/* {(!messages || messages?.length === 0) && (
+                    {(!messages || messages?.length === 0) && (
                         <Empty className="h-full">
                             <EmptyHeader>
                                 <EmptyMedia variant="icon">
@@ -53,46 +77,59 @@ function ChatRoom({ messages }: { messages?: MessageType[] }) {
                                 </EmptyDescription>
                             </EmptyHeader>
                         </Empty>
-                    )} */}
+                    )}
                     <MessageScrollerProvider>
                         <MessageScroller>
                             <MessageScrollerViewport>
                                 <MessageScrollerContent>
-                                    {messages?.map((message) => {
-                                        const isMe = isMyMessage(message, auth.user.id);
+                                    {grouped.map((group) => {
+                                        const isMe = isMyMessage(group.messages[0], auth.user.id);
 
                                         return (
-                                            <MessageScrollerItem
-                                                key={message.id}
-                                                messageId={message.id}
-                                                scrollAnchor={isMe}
-                                            >
+                                            <MessageScrollerItem key={group.messages[0].id}>
                                                 <Message
                                                     align={isMe ? "end" : "start"}
                                                 >
                                                     <MessageAvatar>
                                                         <Avatar>
                                                             <AvatarImage
-                                                                src={message.sender.avatar ?? ""}
-                                                                alt={message.sender.name}
+                                                                src={group.messages[0].sender.avatar ?? ""}
+                                                                alt={group.messages[0].sender.name}
                                                             />
                                                             <AvatarFallback>
-                                                                {message.sender.name.charAt(0)}
+                                                                {group.messages[0].sender.name.charAt(0)}
                                                             </AvatarFallback>
                                                         </Avatar>
                                                     </MessageAvatar>
 
                                                     <MessageContent>
-                                                        <Bubble variant={isMe ? "default" : "muted"}>
-                                                            <BubbleContent>
-                                                                {message.body}
-                                                            </BubbleContent>
-                                                        </Bubble>
+                                                        {group.messages.length === 1 ? (
+                                                            <Bubble variant={isMe ? "default" : "muted"}>
+                                                                <BubbleContent>
+                                                                    {group.messages[0].body}
+                                                                </BubbleContent>
+                                                            </Bubble>
+                                                        ) : (
+                                                            <BubbleGroup className='w-full'>
+                                                                {group.messages.map((message) => (
+                                                                    <Bubble
+                                                                        key={message.id}
+                                                                        variant={isMe ? "default" : "muted"}
+                                                                    >
+                                                                        <BubbleContent>
+                                                                            {message.body}
+                                                                        </BubbleContent>
+                                                                    </Bubble>
+                                                                ))}
+                                                            </BubbleGroup>
+                                                        )}
 
                                                         <MessageFooter>
                                                             <div className="flex items-center gap-1">
                                                                 <span>
-                                                                    {formatTime(message.created_at)}
+                                                                    {formatTime(
+                                                                        group.messages.at(-1)!.created_at
+                                                                    )}
                                                                 </span>
 
                                                                 {isMe && (
@@ -113,7 +150,7 @@ function ChatRoom({ messages }: { messages?: MessageType[] }) {
                 </CardContent>
                 <CardFooter className='pt-3'>
                     <Form className='w-full'>
-                        <InputGroup className='py-6'>
+                        <InputGroup>
                             <InputGroupAddon align={'inline-start'}>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -146,7 +183,17 @@ function ChatRoom({ messages }: { messages?: MessageType[] }) {
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </InputGroupAddon>
-                            <InputGroupInput />
+                            <InputGroupTextarea
+                                className="min-h-0!"
+                                rows={1}
+                                value={body}
+                                onChange={(e) => setBody(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                        e.preventDefault();
+                                        submit(e as unknown as React.FormEvent);
+                                    }
+                                }} />
                             <InputGroupAddon align={'inline-end'}>
                                 <InputGroupButton
                                     type="submit"
@@ -162,7 +209,7 @@ function ChatRoom({ messages }: { messages?: MessageType[] }) {
                     </Form>
                 </CardFooter>
             </Card>
-        </div>
+        </div >
     )
 }
 
