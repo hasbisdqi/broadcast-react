@@ -10,7 +10,7 @@ import {
     MessageScrollerViewport,
 } from "@/components/ui/message-scroller"
 import { Bubble, BubbleContent, BubbleGroup } from '@/components/ui/bubble'
-import { ArrowUpIcon, CheckCheck, GlobeIcon, ImageIcon, MessageCircleDashedIcon, PaperclipIcon, PlusIcon, TelescopeIcon } from 'lucide-react'
+import { ArrowUpIcon, CheckCheck, GlobeIcon, ImageIcon, MessageCircleDashedIcon, PaperclipIcon, PlusIcon, TelescopeIcon, ChevronLeft } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '@/components/ui/input-group'
@@ -23,8 +23,10 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/
 import axios from 'axios'
 import { useEcho } from '@laravel/echo-react'
 import { v4 as uuid } from "uuid";
+import { cn } from '@/lib/utils'
+import { Link } from '@inertiajs/react'
 
-function ChatRoom({ messages }: { messages?: MessageType[] }) {
+function ChatRoom({ messages, isActive }: { messages?: MessageType[], isActive?: boolean }) {
     const page = usePage();
     const { auth } = page.props;
     const [body, setBody] = useState('');
@@ -103,10 +105,13 @@ function ChatRoom({ messages }: { messages?: MessageType[] }) {
         });
     };
     return (
-        <div className="flex-1 grow h-full overflow-hidden">
-            <Card className="h-full">
+        <div className={cn(!isActive ? "hidden md:flex" : "flex", "flex-1 grow h-full overflow-hidden")}>
+            <Card className="h-full w-full border-0 md:border rounded-none md:rounded-xl">
                 <CardHeader className="flex items-center pb-2! justify-between border-b">
                     <div className="flex gap-2 items-center">
+                        <Link href={chat.index()} className="md:hidden mr-2 -ml-2 p-2 hover:bg-muted rounded-full">
+                            <ChevronLeft className="h-5 w-5" />
+                        </Link>
                         <Avatar>
                             <AvatarImage />
                             <AvatarFallback>

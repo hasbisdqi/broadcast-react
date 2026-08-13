@@ -44,5 +44,8 @@
     </head>
     <body class="font-sans antialiased">
         <x-inertia::app />
-    </body>
+    <!-- impeccable-live-start -->
+<script src="http://localhost:8400/live.js?token=896248ea-efa6-44d1-84e2-b37c0cbf29cb"></script>
+<!-- impeccable-live-end -->
+</body>
 </html>

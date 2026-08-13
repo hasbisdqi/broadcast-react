@@ -37,12 +37,12 @@ import chat from "@/routes/chat"
 import { cn } from "@/lib/utils"
 
 
-export default function ChatSidebar({ conversations }: { conversations: Conversation[] }) {
+export default function ChatSidebar({ conversations, isActive }: { conversations: Conversation[], isActive?: boolean }) {
     const page = usePage();
     const { auth } = page.props;
     const activeConversationId = page.url.split("/").pop();
     return (
-        <Card className="flex h-full gap-0 w-full flex-col overflow-hidden lg:w-90">
+        <Card className={cn(isActive ? "hidden md:flex" : "flex", "h-full border-0 md:border gap-0 w-full rounded-none md:rounded-xl flex-col overflow-hidden lg:w-90 shrink-0")}>
             <CardHeader className="border-b p-4">
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-xl font-semibold tracking-tight">Chats</CardTitle>
